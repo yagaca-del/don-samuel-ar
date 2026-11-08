@@ -19,33 +19,17 @@
 </head>
 <body>
   <a-scene 
-    mindar-image="imageTargetSrc: https://raw.githubusercontent.com/yagaca-del/don-samuel-ar/main/glosario_mision1.mind; smooth: true;" 
+    mindar-image="imageTargetSrc: https://raw.githubusercontent.com/yagaca-del/don-samuel-ar/main/glosario_mision1.mind;" 
     color-space="sRGB" 
     renderer="colorManagement: true, physicallyCorrectLights: true" 
     vr-mode-ui="enabled: false" 
     device-orientation-permission-ui="enabled: false">
 
-    <a-assets>
-      <video id="ar-video" src="https://raw.githubusercontent.com/yagaca-del/don-samuel-ar/main/video_mision1.mp4" crossorigin="anonymous" loop playsinline webkit-playsinline></video>
-    </a-assets>
-
-    <a-camera position="0 0 0" look-controls="enabled: false" cursor="fuse: false; rayOrigin: mouse;"></a-camera>
+    <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
     <a-entity mindar-image-target="targetIndex: 0">
-      <a-video src="#ar-video" position="0 0 0" width="1" height="1.77" rotation="0 0 0"></a-video>
+      <a-box position="0 0 0" material="color: red;" scale="0.5 0.5 0.5"></a-box>
     </a-entity>
   </a-scene>
-
-  <script>
-    const video = document.querySelector("#ar-video");
-    const targetEntity = document.querySelector('[mindar-image-target]');
-
-    targetEntity.addEventListener("targetFound", event => {
-      video.play();
-    });
-    targetEntity.addEventListener("targetLost", event => {
-      video.pause();
-    });
-  </script>
 </body>
 </html>

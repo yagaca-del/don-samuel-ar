@@ -3,58 +3,115 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Misión 1: Don Samuel - Constitución 1991</title>
+    <title>Glosario Interactivo - Misión 1 Don Samuel</title>
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/aframe-orbit-controls@1.3.0/dist/aframe-orbit-controls.min.js"></script>
     <style>
       body, html { 
-        margin: 0; 
-        padding: 0;
-        width: 100%;
-        height: 100%;
-        overflow: hidden; 
-        background: #0f172a; 
-        -webkit-touch-callout: none;
-        -webkit-user-select: none;
-        user-select: none;
+        margin: 0; padding: 0; width: 100%; height: 100%; 
+        overflow: hidden; background: #0f172a; font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        -webkit-touch-callout: none; -webkit-user-select: none; user-select: none;
       }
-      canvas { touch-action: none; }
-      #info-overlay {
+      #ui-container {
         position: absolute;
-        bottom: 30px;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 99;
-        background: rgba(0, 0, 0, 0.8);
-        color: white;
-        padding: 12px 24px;
-        border-radius: 20px;
-        font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-        font-size: 14px;
+        top: 0; left: 0; width: 100%; height: 100%;
+        display: flex; flex-direction: column; justify-content: space-between;
+        z-index: 10; pointer-events: none;
+        box-sizing: border-box; padding: 20px;
+      }
+      header {
+        background: rgba(15, 23, 42, 0.85);
+        backdrop-filter: blur(10px);
+        padding: 15px; border-radius: 12px; text-align: center; color: white;
+        pointer-events: auto; border: 1px solid rgba(255,255,255,0.1);
+      }
+      header h1 { margin: 0; font-size: 18px; color: #60a5fa; }
+      header p { margin: 5px 0 0; font-size: 13px; color: #cbd5e1; }
+      
+      .glossary-drawer {
+        background: rgba(15, 23, 42, 0.9);
+        backdrop-filter: blur(10px);
+        padding: 15px; border-radius: 16px; color: white;
+        pointer-events: auto; max-height: 45vh; overflow-y: auto;
+        border: 1px solid rgba(255,255,255,0.1);
+      }
+      .glossary-grid {
+        display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 10px;
+      }
+      .term-btn {
+        background: #1e3a8a; color: white; border: none; padding: 10px;
+        border-radius: 8px; font-size: 12px; font-weight: bold; text-align: left;
+        cursor: pointer; transition: background 0.2s;
+      }
+      .term-btn:active { background: #2563eb; }
+      
+      /* Modal flotante para la definición y video */
+      #modal-card {
+        display: none; position: absolute; top: 50%; left: 50%;
+        transform: translate(-50%, -50%); width: 85%; max-width: 320px;
+        background: #ffffff; color: #1e293b; padding: 20px; border-radius: 16px;
+        z-index: 100; pointer-events: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
         text-align: center;
-        pointer-events: none;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      }
+      #modal-card h3 { margin-top: 0; color: #1e3a8a; }
+      #modal-card p { font-size: 13px; line-height: 1.4; color: #475569; }
+      .close-btn {
+        background: #ef4444; color: white; border: none; padding: 8px 16px;
+        border-radius: 6px; margin-top: 15px; font-weight: bold; cursor: pointer;
       }
     </style>
   </head>
   <body>
-    <div id="info-overlay">Misión 1: Desliza para explorar el glosario</div>
 
-    <a-scene embedded vr-mode-ui="enabled: false">
-      <a-camera id="camera" position="0 1.6 3" orbit-controls="target: 0 1 0; minDistance: 1; maxDistance: 10; enableDamping: true; dampingFactor: 0.05;"></a-camera>
-      
+    <!-- Interfaz Web superpuesta -->
+    <div id="ui-container">
+      <header>
+        <h1>Misión 1: El Mapa de la Convivencia</h1>
+        <p>Constitución Política de Colombia de 1991</p>
+      </header>
+
+      <div class="glossary-drawer">
+        <div style="font-size: 13px; font-weight: bold; color: #93c5fd; text-align: center;">Toca un término del Glosario:</div>
+        <div class="glossary-grid">
+          <button class="term-btn" onclick="openTerm('Constitución', 'Es la norma más importante de nuestro país. En ella están escritos los derechos, deberes y cómo debe funcionar Colombia[cite: 1].')">📘 Constitución[cite: 1]</button>
+          <button class="term-btn" onclick="openTerm('Democracia', 'Es cuando el poder está en manos del pueblo. Participamos eligiendo y opinando para tomar decisiones[cite: 1].')">👥 Democracia[cite: 1]</button>
+          <button class="term-btn" onclick="openTerm('Libro de reglas', 'La Constitución es como el libro de reglas de todos los colombianos para vivir en diversidad y armonía[cite: 1].')">📖 Libro de reglas[cite: 1]</button>
+          <button class="term-btn" onclick="openTerm('Participación', 'Es el derecho de todas las personas a opinar, proponer y tomar parte en las decisiones que afectan nuestra vida[cite: 1].')">🙋🏽 Participación[cite: 1]</button>
+          <button class="term-btn" onclick="openTerm('Supremacía', 'La Constitución está por encima de cualquier otra ley. Todas las normas deben respetarla[cite: 1].')">⚖️ Supremacía[cite: 1]</button>
+          <button class="term-btn" onclick="openTerm('Estado Social', 'Significa que las leyes existen para proteger a las personas, promover la justicia y asegurar una vida digna[cite: 1].')">🇨🇴 Estado Social[cite: 1]</button>
+          <button class="term-btn" onclick="openTerm('Derechos', 'Son las libertades y garantías que tiene cada persona por el hecho de ser humana. Nadie nos los puede quitar[cite: 1].')">🛡️ Derechos[cite: 1]</button>
+          <button class="term-btn" onclick="openTerm('Deberes', 'Son las responsabilidades que tenemos para aportar al bien común y respetar los derechos de los demás[cite: 1].')">📝 Deberes[cite: 1]</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ventana flotante (Modal) para mostrar el concepto y el futuro video -->
+    <div id="modal-card">
+      <h3 id="modal-title">Título</h3>
+      <p id="modal-desc">Descripción</p>
+      <div id="video-container" style="margin-top: 10px; font-size: 12px; color: #2563eb; font-weight: bold;">[ Video educativo disponible ]</div>
+      <button class="close-btn" onclick="closeTerm()">Cerrar</button>
+    </div>
+
+    <!-- Escena 3D de fondo para mantener la fluidez táctil en el iPhone -->
+    <a-scene embedded vr-mode-ui="enabled: false" renderer="colorManagement: true;">
+      <a-camera position="0 1.6 3" look-controls="enabled: false"></a-camera>
       <a-light type="ambient" color="#fff" intensity="0.9"></a-light>
-      <a-light type="directional" position="2 4 2" intensity="1"></a-light>
-
-      <!-- Panel principal que simula la tarjeta del glosario de la Constitución -->
       <a-entity position="0 1 0">
-        <!-- Tarjeta de fondo -->
-        <a-plane color="#1e3a8a" width="2" height="1.2" roughness="0.2" position="0 0 0">
-          <!-- Texto simulado o etiqueta de la Constitución -->
-          <a-text value="Constitucion 1991\nDon Samuel" align="center" color="#ffffff" position="0 0.3 0.01" scale="0.8 0.8 0.8"></a-text>
-          <a-text value="Mision 1: El mapa de la convivencia" align="center" color="#93c5fd" position="0 -0.2 0.01" scale="0.4 0.4 0.4"></a-text>
-        </a-plane>
+        <a-box color="#1e3a8a" width="1.5" height="0.9" depth="0.1" roughness="0.3"
+                 animation="property: rotation; to: 0 360 0; loop: true; dur: 15000; easing: linear;">
+        </a-box>
       </a-entity>
     </a-scene>
+
+    <script>
+      function openTerm(title, desc) {
+        document.getElementById('modal-title').innerText = title;
+        document.getElementById('modal-desc').innerText = desc;
+        document.getElementById('modal-card').style.display = 'block';
+      }
+      function closeTerm() {
+        document.getElementById('modal-card').style.display = 'none';
+      }
+    </script>
   </body>
 </html>
